@@ -51,13 +51,23 @@ describe("HTML Scaffolding with default options", {
     value_of(buttonList.getElement('li a.today')).should_not_be(null);
     value_of(buttonList.getElement('li a.reset')).should_not_be(null);
     value_of(buttonList.getElement('li a.next')).should_not_be(null);
+  },
+  
+  'should build the proper fields': function(){
+    var fieldsContainer = $('calendar_fields');
+    value_of(fieldsContainer).should_not_be(null);
+    value_of(Instance.fields.start).should_not_be(null);
+    value_of(Instance.fields.end).should_not_be(null);
+    value_of(fieldsContainer.getElement('input.start')).should_be(Instance.fields.start);
+    value_of(fieldsContainer.getElement('input.end')).should_be(Instance.fields.end);
   }
 });
 
-describe("HTML Scaffolding with custom buttons", {
+describe("HTML Scaffolding with custom buttons & fields", {
   'before each': function(){
     setupHTML();
     var extraHTML = '<a href="#" id="ooglyPrevious">Previously...</a><a href="#" id="ooglyToday">Today...</a><a href="#" id="ooglyReset">Reset...</a><a href="#" id="ooglyNext">Next...</a>';
+    extraHTML += '<input type="text" id="ooglyStart" /><input type="text" id="ooglyEnd" />'
     document.body.appendChild(new Element('div', { html:extraHTML }));
   },
   'after each': function(){
@@ -81,20 +91,14 @@ describe("HTML Scaffolding with custom buttons", {
     value_of($('ooglyNext').hasClass('next')).should_be(true);
   },
   
-  'should build the proper buttons given elements': function(){
+  'should build the proper fields given ids': function(){
     Instance = new Timeframe('calendar', {
-      previousButton: $('ooglyPrevious'),
-      todayButton: $('ooglyToday'),
-      resetButton: $('ooglyReset'),
-      nextButton: $('ooglyNext')
+      startField: 'ooglyStart',
+      endField: 'ooglyEnd'
     });
-    value_of($('ooglyPrevious').hasClass('timeframe_button')).should_be(true);
-    value_of($('ooglyPrevious').hasClass('previous')).should_be(true);
-    value_of($('ooglyToday').hasClass('timeframe_button')).should_be(true);
-    value_of($('ooglyToday').hasClass('today')).should_be(true);
-    value_of($('ooglyReset').hasClass('timeframe_button')).should_be(true);
-    value_of($('ooglyReset').hasClass('reset')).should_be(true);
-    value_of($('ooglyNext').hasClass('timeframe_button')).should_be(true);
-    value_of($('ooglyNext').hasClass('next')).should_be(true);
+    value_of(Instance.fields.start).should_not_be(null);
+    value_of(Instance.fields.end).should_not_be(null);
+    value_of($('ooglyStart')).should_be(Instance.fields.start)
+    value_of($('ooglyEnd')).should_be(Instance.fields.end)
   }
 })
