@@ -60,7 +60,14 @@ describe("HTML Scaffolding with default options", {
     value_of(Instance.fields.end).should_not_be(null);
     value_of(fieldsContainer.getElement('input.start')).should_be(Instance.fields.start);
     value_of(fieldsContainer.getElement('input.end')).should_be(Instance.fields.end);
-  }
+  },
+  
+  'should build out two calendar tables': function(){
+    value_of(Instance.element.getElements('table').length).should_be(2);
+  },
+  
+  'should have Sunday as the beginning of the week': function(){ /* TODO */ }
+  'should list out the days of the week': function(){ /* TODO */ }
 });
 
 describe("HTML Scaffolding with custom buttons & fields", {
@@ -68,10 +75,11 @@ describe("HTML Scaffolding with custom buttons & fields", {
     setupHTML();
     var extraHTML = '<a href="#" id="ooglyPrevious">Previously...</a><a href="#" id="ooglyToday">Today...</a><a href="#" id="ooglyReset">Reset...</a><a href="#" id="ooglyNext">Next...</a>';
     extraHTML += '<input type="text" id="ooglyStart" /><input type="text" id="ooglyEnd" />'
-    document.body.appendChild(new Element('div', { html:extraHTML, style: 'display:none' }));
+    document.body.appendChild(new Element('div', { id: 'extraHTML', html:extraHTML, style: 'display:none' }));
   },
   'after each': function(){
     teardownHTML();
+    $('extraHTML').dispose();
   },
   
   'should build the proper buttons given ids': function(){

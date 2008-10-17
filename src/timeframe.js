@@ -32,6 +32,8 @@ var Timeframe = new Class({
   calendars: [],
   // Hash containing the start and end fields
   fields: new Hash(),
+  // Keeps a running count of how many months are in this.calendars
+  months: 0,
   
   initialize: function(element, options){
     // Setup & Abandon if no element
@@ -42,13 +44,43 @@ var Timeframe = new Class({
     this.setOptions(options);
     Timeframes.push(this);
     
-    this.fields = new Hash({ start: $(this.options.startField), end: $(this.options.endField) });
-    
     this._buildButtons();
+    
+    this.fields = new Hash({ start: $(this.options.startField), end: $(this.options.endField) });
     this._buildFields();
+    
+    this.element.adopt(new Element('div', {id: this.element.id + "_container"}))
+    
+    this.options.months.times(this.createCalendar.bind(this));
   },
   
-  
+  createCalendar: function(){
+    // Create a base table
+    var calendar = new Element('table', {
+      id: this.element.id + '_calendar_' + this.calendars.length, border: 0, cellspacing: 0, cellpadding: 0
+    });
+    
+    // Insert a <caption>
+    var caption = new Element('caption');
+    calendar.adopt(caption);
+    calendar.set('caption', caption);
+    
+    // Insert the headings
+    var thead = new Element('thead')
+    var row = new Element('tr');
+    this.options.dayNames.length.times(function(index){
+      var dayName = this.options.dayNames[(index + this.options.weekOffset) % 7]
+      var cell = new Element('th', {scope: 'col', abbr: dayName, text: dayName.substr(0,1)})
+      row.adopt(cell);
+    }, this);
+    thead.adopt(row);
+    calendar.adopt(thead);
+    
+    // Insert the calendar
+    this.element.getElement('div#' + this.element.id + '_container').adopt(calendar);
+    this.calendars.push(calendar);
+    this.months = this.calendars.length;
+  },
   
   _buildButtons: function(){
     var buttons = new Hash({
@@ -89,6 +121,6 @@ var Timeframe = new Class({
     }, this);
     this.element.adopt(fieldsContainer);
     
-    // this.parseField('start').refreshField('start').parseField('end').refreshField('end').initDate = new Date(this.date);
+    // TODO: this.parseField('start').refreshField('start').parseField('end').refreshField('end').initDate = new Date(this.date);
   }
 });
