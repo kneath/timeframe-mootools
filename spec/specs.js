@@ -68,7 +68,7 @@ describe("HTML Scaffolding with custom buttons & fields", {
     setupHTML();
     var extraHTML = '<a href="#" id="ooglyPrevious">Previously...</a><a href="#" id="ooglyToday">Today...</a><a href="#" id="ooglyReset">Reset...</a><a href="#" id="ooglyNext">Next...</a>';
     extraHTML += '<input type="text" id="ooglyStart" /><input type="text" id="ooglyEnd" />'
-    document.body.appendChild(new Element('div', { html:extraHTML }));
+    document.body.appendChild(new Element('div', { html:extraHTML, style: 'display:none' }));
   },
   'after each': function(){
     teardownHTML();
