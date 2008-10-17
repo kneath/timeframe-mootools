@@ -66,8 +66,29 @@ describe("HTML Scaffolding with default options", {
     value_of(Instance.element.getElements('table').length).should_be(2);
   },
   
-  'should have Sunday as the beginning of the week': function(){ /* TODO */ }
-  'should list out the days of the week': function(){ /* TODO */ }
+  'should list out the seven days of the week': function(){
+    var headings = Instance.element.getElement('table').getElements('th');
+    value_of(headings.length).should_be(7);
+    value_of(headings[0].get('text')).should_be('S')
+    value_of(headings[0].get('abbr')).should_be('Sunday')
+    value_of(headings[1].get('text')).should_be('M')
+    value_of(headings[1].get('abbr')).should_be('Monday')
+    value_of(headings[2].get('text')).should_be('T')
+    value_of(headings[2].get('abbr')).should_be('Tuesday')
+    value_of(headings[3].get('text')).should_be('W')
+    value_of(headings[3].get('abbr')).should_be('Wednesday')
+    value_of(headings[4].get('text')).should_be('T')
+    value_of(headings[4].get('abbr')).should_be('Thursday')
+    value_of(headings[5].get('text')).should_be('F')
+    value_of(headings[5].get('abbr')).should_be('Friday')
+    value_of(headings[6].get('text')).should_be('S')
+    value_of(headings[6].get('abbr')).should_be('Saturday')
+  },
+  
+  'should insert 6 rows of tds and 1 row of trs': function(){
+    var trs = Instance.element.getElement('table').getElements('tr');
+    value_of(trs.length).should_be(7);
+  }
 });
 
 describe("HTML Scaffolding with custom buttons & fields", {

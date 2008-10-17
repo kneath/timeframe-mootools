@@ -76,6 +76,17 @@ var Timeframe = new Class({
     thead.adopt(row);
     calendar.adopt(thead);
     
+    // Insert empty rows into the table (for population later)
+    var tbody = new Element('tbody');
+    (6).times(function(rowNumber){
+      var row = new Element('tr');
+      this.options.dayNames.length.times(function(){
+        row.adopt(new Element('td'));
+      })
+      tbody.adopt(row);
+    }, this);
+    calendar.adopt(tbody);
+    
     // Insert the calendar
     this.element.getElement('div#' + this.element.id + '_container').adopt(calendar);
     this.calendars.push(calendar);
