@@ -7,12 +7,60 @@
 	<title>Timeframe Example Page</title>
 	<script src="../lib/mootools.js" type="text/javascript" charset="utf-8"></script>
 	<script src="../src/timeframe.js" type="text/javascript" charset="utf-8"></script>
+	<link rel="stylesheet" href="../src/timeframe.css" type="text/css" />
+	<style type="text/css" media="screen">
+	 /*------------------------------------------------------------------------------------
+	   @group Global Reset
+	 ------------------------------------------------------------------------------------*/
+	 * {
+	   padding:0;
+	   margin:0;
+	 }
+	 h1, h2, h3, h4, h5, h6, p, pre, blockquote, label, ul, ol, dl, fieldset, address { margin:1em 0; }
+	 li, dd { margin-left:5%; }
+	 fieldset { padding: .5em; }
+	 select option{ padding:0 5px; }
+
+	 .access{ display:none; } /* For accessibility related elements */
+	 .clear{ clear:both; height:0px; font-size:0px; line-height:0px; overflow:hidden; }
+	 a{ outline:none; }
+	 a img{ border:none; }
+
+	 .clearfix:after {
+	     content: ".";
+	     display: block;
+	     height: 0;
+	     clear: both;
+	     visibility: hidden;
+	 }
+	 * html .clearfix {height: 1%;}
+	 .clearfix {display:inline-block;}
+	 .clearfix {display: block;}
+
+	 /* @end */
+	 
+	 body{
+	   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	   font-size:12px;
+	   background:#eee;
+	 }
+	 
+	 #wrapper{
+	   margin:30px auto;
+	   width:600px;
+	   padding:10px;
+	   background:#fff;
+	   border:4px solid #ddd;
+	 }
+	</style>
 </head>
 
 <body>
-  <div id="calendar"></div>
-  <script type="text/javascript" charset="utf-8">
-    new Timeframe('calendar');
-  </script>
+  <div id="wrapper">
+    <div id="calendar"></div>
+    <script type="text/javascript" charset="utf-8">
+      new Timeframe('calendar');
+    </script>
+  </div>
 </body>
 </html>
