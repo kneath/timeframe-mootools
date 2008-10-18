@@ -39,6 +39,7 @@ var Timeframe = new Class({
     // Setup & Abandon if no element
     this.element = $(element);
     if (this.element == null) return;
+    this.element.addClass('timeframe_calendar')
     
     // Initial Setup
     this.setOptions(options);
@@ -130,8 +131,8 @@ var Timeframe = new Class({
       
       calendar.getElements('td').each(function(dayCell){
         var date = new Date(iterator);
+        dayCell.store('date', date);
         dayCell.set({
-          'date': date,
           'text': date.getDate(),
           'class': inactive || 'active'
         });
@@ -141,7 +142,7 @@ var Timeframe = new Class({
           dayCell.addClass('selectable');
         }
         if (iterator.toString() === new Date().neutral().toString()) dayCell.addClass('today');
-        dayCell.set('baseClass', dayCell.get('class'));
+        dayCell.store('baseClass', dayCell.get('class'));
         
         // Iterate one day and add class if it's beyond the month
         iterator.setDate(iterator.getDate() + 1);
