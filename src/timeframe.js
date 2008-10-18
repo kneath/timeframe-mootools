@@ -31,7 +31,7 @@ var Timeframe = new Class({
   // Keeps an array of the calendar tables available
   calendars: [],
   // Hash containing the start and end fields
-  fields: new Hash(),
+  fields: {},
   // Keeps a running count of how many months are in this.calendars
   months: 0,
   
@@ -52,8 +52,15 @@ var Timeframe = new Class({
     this.element.adopt(new Element('div', {id: this.element.id + "_container"}))
     
     this.options.months.times(this.createCalendar.bind(this));
+    
+    this.date = new Date();
+    this.populate();
   },
   
+  /*
+    Function: createCalendar
+    Creates a new blank calendar table (for a month)
+  */
   createCalendar: function(){
     // Create a base table
     var calendar = new Element('table', {
@@ -63,7 +70,6 @@ var Timeframe = new Class({
     // Insert a <caption>
     var caption = new Element('caption');
     calendar.adopt(caption);
-    calendar.set('caption', caption);
     
     // Insert the headings
     var thead = new Element('thead')
@@ -93,6 +99,61 @@ var Timeframe = new Class({
     this.months = this.calendars.length;
   },
   
+  /* 
+    Function: destroyCalendar
+    Removes the last calendar from the array
+  */
+  destroyCalendar: function(){
+    this.calendars.pop();
+    this.months = this.calendars.length;
+  },
+  
+  /*
+    Function: populate
+    Populates the active calendars with date numberss
+  */
+  populate: function(){
+    var month = this.date.neutral();
+    month.setDate(1);
+    this.calendars.each(function(calendar){
+      calendar.getElement('caption').set('text', this.options.monthNames[month.getMonth()] + ' ' + month.getFullYear());
+      
+      // Setup the iterator and setup inactive to know it's before the month
+      var iterator = new Date(month);
+      var offset = (iterator.getDay()  - this.options.weekOffset) % 7;
+      var inactive = offset > 0 ? 'pre beyond' : false;
+      iterator.setDate(iterator.getDate() - offset);
+      if (iterator.getDate() > 1 && !inactive){
+        iterator.setDate(iterator.getDate() - 7);
+        if (iterator.getDate() > 1) inactive = 'pre beyond';
+      }
+      
+      calendar.getElements('td').each(function(dayCell){
+        var date = new Date(iterator);
+        dayCell.set({
+          'date': date,
+          'text': date.getDate(),
+          'class': inactive || 'active'
+        });
+        if ((this.options.earliest && date < this.earliest) || (this.latest && date > this.latest)){
+          dayCell.addClass('unselectable');
+        }else{
+          dayCell.addClass('selectable');
+        }
+        if (iterator.toString() === new Date().neutral().toString()) dayCell.addClass('today');
+        dayCell.set('baseClass', dayCell.get('class'));
+        
+        // Iterate one day and add class if it's beyond the month
+        iterator.setDate(iterator.getDate() + 1);
+        if (iterator.getDate() == 1) inactive = inactive ? false : 'post beyond';
+      }, this);
+      
+      // Iterate to the next month
+      month.setMonth(month.getMonth() + 1);
+    }, this);
+  },
+  
+  // Internal function to create buttons used for calendar navigation
   _buildButtons: function(){
     var buttons = new Hash({
       previous: { label: '&larr;', element: $(this.options.previousButton) },
@@ -116,6 +177,7 @@ var Timeframe = new Class({
     this.element.grab(buttonList, 'top')
   },
   
+  // Internal function to build the fields used for start/end dates
   _buildFields: function() {
     var fieldsContainer = new Element('div', {id: this.element.id + '_fields', 'class': 'timeframe_fields'});
     this.fields.each(function(element, key){
@@ -133,5 +195,11 @@ var Timeframe = new Class({
     this.element.adopt(fieldsContainer);
     
     // TODO: this.parseField('start').refreshField('start').parseField('end').refreshField('end').initDate = new Date(this.date);
+  }
+});
+
+$extend(Date.prototype, {
+  neutral: function() {
+    return new Date(this.getFullYear(), this.getMonth(), this.getDate(), 12);
   }
 });

@@ -23,13 +23,13 @@ describe("Initialization", {
     teardownHTML();
   },
   
-  'should push new instances to the Timeframe object': function(){
+  'pushes new instances to the Timeframe object': function(){
     var old_count = Timeframes.length;
     Instance = new Timeframe('calendar');
     value_of(Timeframes.length).should_be(old_count + 1);
   },
   
-  'options sanity check': function(){
+  'options are sane': function(){
     Instance = new Timeframe('calendar', {months: 42});
     value_of(Instance.options.months).should_be(42);
   }
@@ -44,7 +44,7 @@ describe("HTML Scaffolding with default options", {
     teardownHTML();
   },
   
-  'should build the proper buttons': function(){
+  'builds the proper buttons': function(){
     var buttonList = $('calendar_menu');
     value_of(buttonList).should_not_be(null);
     value_of(buttonList.getElement('li a.previous')).should_not_be(null);
@@ -53,7 +53,7 @@ describe("HTML Scaffolding with default options", {
     value_of(buttonList.getElement('li a.next')).should_not_be(null);
   },
   
-  'should build the proper fields': function(){
+  'builds the proper fields': function(){
     var fieldsContainer = $('calendar_fields');
     value_of(fieldsContainer).should_not_be(null);
     value_of(Instance.fields.start).should_not_be(null);
@@ -62,11 +62,11 @@ describe("HTML Scaffolding with default options", {
     value_of(fieldsContainer.getElement('input.end')).should_be(Instance.fields.end);
   },
   
-  'should build out two calendar tables': function(){
+  'builds out two calendar tables': function(){
     value_of(Instance.element.getElements('table').length).should_be(2);
   },
   
-  'should list out the seven days of the week': function(){
+  'lists out the seven days of the week': function(){
     var headings = Instance.element.getElement('table').getElements('th');
     value_of(headings.length).should_be(7);
     value_of(headings[0].get('text')).should_be('S')
@@ -85,9 +85,20 @@ describe("HTML Scaffolding with default options", {
     value_of(headings[6].get('abbr')).should_be('Saturday')
   },
   
-  'should insert 6 rows of tds and 1 row of trs': function(){
+  'inserts 6 rows of tds and 1 row of trs': function(){
     var trs = Instance.element.getElement('table').getElements('tr');
     value_of(trs.length).should_be(7);
+  },
+  
+  'fills in the calendars caption': function(){
+    var first_caption = Instance.element.getElements('caption')[0];
+    var second_caption = Instance.element.getElements('caption')[1];
+    value_of(first_caption.get('text').length > 1).should_be(true);
+    value_of(second_caption.get('text').length > 1).should_be(true);
+  },
+  
+  'fills in calendar tables with last month and this month': function(){
+    
   }
 });
 
@@ -103,7 +114,7 @@ describe("HTML Scaffolding with custom buttons & fields", {
     $('extraHTML').dispose();
   },
   
-  'should build the proper buttons given ids': function(){
+  'builds the proper buttons given ids': function(){
     Instance = new Timeframe('calendar', {
       previousButton: 'ooglyPrevious',
       todayButton: 'ooglyToday',
@@ -120,7 +131,7 @@ describe("HTML Scaffolding with custom buttons & fields", {
     value_of($('ooglyNext').hasClass('next')).should_be(true);
   },
   
-  'should build the proper fields given ids': function(){
+  'builds the proper fields given ids': function(){
     Instance = new Timeframe('calendar', {
       startField: 'ooglyStart',
       endField: 'ooglyEnd'
