@@ -157,10 +157,10 @@ var Timeframe = new Class({
   // Internal function to create buttons used for calendar navigation
   _buildButtons: function(){
     var buttons = new Hash({
-      previous: { label: '&larr;', element: $(this.options.previousButton) },
+      previous: { label: ' ←', element: $(this.options.previousButton) },
       today:    { label: 'T',      element: $(this.options.todayButton) },
       reset:    { label: 'R',      element: $(this.options.resetButton) },
-      next:     { label: '&rarr;', element: $(this.options.nextButton) }
+      next:     { label: '→', element: $(this.options.nextButton) }
     })
     
     var buttonList = new Element('ul', {id: this.element.id + '_menu', className: 'timeframe_menu'});
