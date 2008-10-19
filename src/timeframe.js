@@ -123,10 +123,14 @@ var Timeframe = new Class({
   
   /*
     Function: populate
-    Populates the active calendars with date numberss
+    Populates the active calendars with date numbers
   */
   populate: function(){
+    // Set to same hour for all dates
     var month = this.date.neutral();
+    // Center the calendar on this date if we have more than 2 calendars showing
+    if (this.months > 2) month.setMonth(month.getMonth() - (this.months/2).toInt());
+    
     month.setDate(1);
     this.calendars.each(function(calendar){
       calendar.getElement('caption').set('text', this.options.monthNames[month.getMonth()] + ' ' + month.getFullYear());
@@ -165,7 +169,7 @@ var Timeframe = new Class({
       month.setMonth(month.getMonth() + 1);
     }, this);
     // Update the highlighting UI
-    if (this.range.begining != null) this.handleRangeChange();
+    if (this.range.begining != null) this._updateCalendarDisplay();
   },
   
   // Internal function to create buttons used for calendar navigation
@@ -236,9 +240,14 @@ var Timeframe = new Class({
   
   /*
     Function handleRangeChange
-    Gets fired whenever the date range changes. Responsible for updating the UI.
+    Gets fired whenever the date range changes.
   */
   handleRangeChange: function(){
+    this._updateCalendarDisplay();
+  },
+  
+  // Responsible for updating the classes & display of the active dates on the calendar
+  _updateCalendarDisplay: function(){
     this.element.getElements('td').each(function(td){
       td.set('class', td.retrieve('baseClass'));
       
