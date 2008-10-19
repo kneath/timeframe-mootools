@@ -56,6 +56,7 @@ var Timeframe = new Class({
     
     this.date = new Date();
     this.populate();
+    this.register();
   },
   
   /*
@@ -157,7 +158,7 @@ var Timeframe = new Class({
   // Internal function to create buttons used for calendar navigation
   _buildButtons: function(){
     var buttons = new Hash({
-      previous: { label: ' ←', element: $(this.options.previousButton) },
+      previous: { label: '←', element: $(this.options.previousButton) },
       today:    { label: 'T',      element: $(this.options.todayButton) },
       reset:    { label: 'R',      element: $(this.options.resetButton) },
       next:     { label: '→', element: $(this.options.nextButton) }
@@ -179,7 +180,7 @@ var Timeframe = new Class({
   },
   
   // Internal function to build the fields used for start/end dates
-  _buildFields: function() {
+  _buildFields: function(){
     var fieldsContainer = new Element('div', {id: this.element.id + '_fields', 'class': 'timeframe_fields'});
     this.fields.each(function(element, key){
       if (element != null){
@@ -198,6 +199,62 @@ var Timeframe = new Class({
     // TODO: this.parseField('start').refreshField('start').parseField('end').refreshField('end').initDate = new Date(this.date);
   }
 });
+
+/*
+  Timeframe.Events
+  Contains all of the events based functionality for Timeframe. Mixed into Timeframe class.
+*/
+Timeframe.Events = {
+  // Registers the events
+  register: function(){
+    document.addEvent('click', this.handleClick.bind(this));
+    this.element.addEvent('mousedown', this.handleMouseDown.bind(this));
+    this.element.addEvent('mouseover', this.handleMouseOver.bind(this));
+    document.addEvent('mouseup', this.handleMouseUp.bind(this));
+    // TODO: Disable text selection in start/end fields? (why?)
+    this.fields.each(function(field){
+      field.addEvent('focus', this.handleFieldFocus.bind(this));
+      field.addEvent('blur', this.handleFieldBlur.bind(this));
+      field.addEvent('keyup', this.handleFieldChange.bind(this));
+    }, this);
+  },
+  
+  // Listens to all clicks for the document
+  handleClick: function(event){
+    // TODO
+  },
+  
+  // Listens to mousedowns inside this.element
+  handleMouseDown: function(event){
+    // TODO
+  },
+  
+  // Listens to mouseovers inside this.element
+  handleMouseOver: function(event){
+    // TODO
+  },
+  
+  // Listens to all mouseups for the document
+  handleMouseUp: function(event){
+    // TODO
+  },
+  
+  // Handles when a field gains focus
+  handleFieldFocus: function(){
+    
+  },
+  
+  // Handles when a field loses focus
+  handleFieldBlur: function(){
+    
+  },
+  
+  // Handles when a field's value changes
+  handleFieldChange: function(){
+    
+  }
+}
+Timeframe.implement(Timeframe.Events);
 
 $extend(Date.prototype, {
   neutral: function() {
