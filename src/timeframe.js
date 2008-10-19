@@ -32,6 +32,8 @@ var Timeframe = new Class({
   calendars: [],
   // Hash containing the start and end fields
   fields: {},
+  // Keeps a hash of the previous/next/today/reset buttons
+  buttons: {},
   // Keeps a running count of how many months are in this.calendars
   months: 0,
   // Hash containing the start and end dates for the rnage
@@ -162,11 +164,13 @@ var Timeframe = new Class({
       // Iterate to the next month
       month.setMonth(month.getMonth() + 1);
     }, this);
+    // Update the highlighting UI
+    if (this.range.begining != null) this.handleRangeChange();
   },
   
   // Internal function to create buttons used for calendar navigation
   _buildButtons: function(){
-    var buttons = new Hash({
+    this.buttons = new Hash({
       previous: { label: '←', element: $(this.options.previousButton) },
       today:    { label: 'T',      element: $(this.options.todayButton) },
       reset:    { label: 'R',      element: $(this.options.resetButton) },
@@ -174,16 +178,17 @@ var Timeframe = new Class({
     })
     
     var buttonList = new Element('ul', {id: this.element.id + '_menu', className: 'timeframe_menu'});
-    buttons.each(function(value, key){
+    this.buttons.each(function(value, key){
       if (value.element != null){
         value.element.addClass('timeframe_button').addClass(key)
       }else{
         var item = new Element('li');
         var button = new Element('a', {'class': 'timeframe_button ' + key, href: '#', text: value.label});
+        this.buttons[key].element = button;
         item.adopt(button);
         buttonList.adopt(item);
       }
-    });
+    }, this);
     
     this.element.grab(buttonList, 'top')
   },
@@ -264,12 +269,15 @@ Timeframe.Events = {
     this.element.addEvent('mousedown', this.handleMouseDown.bind(this));
     this.element.addEvent('mouseover', this.handleMouseOver.bind(this));
     document.addEvent('mouseup', this.handleMouseUp.bind(this));
-    // TODO: Disable text selection in start/end fields? (why?)
     this.fields.each(function(field){
       field.addEvent('focus', this.handleFieldFocus.bind(this));
       field.addEvent('blur', this.handleFieldBlur.bind(this));
       field.addEvent('keyup', this.handleFieldChange.bind(this));
     }, this);
+    this.buttons.today.element.addEvent('click', this.handleTodayClick.bind(this));
+    this.buttons.reset.element.addEvent('click', this.handleResetClick.bind(this));
+    this.buttons.next.element.addEvent('click', this.handleNextClick.bind(this));
+    this.buttons.previous.element.addEvent('click', this.handlePreviousClick.bind(this));
     this._disableTextSelection();
   },
   
@@ -318,6 +326,25 @@ Timeframe.Events = {
   // Handles when a field's value changes
   handleFieldChange: function(){
     
+  },
+  
+  handleResetClick: function(event){},
+  
+  // Fast-forwards to today in center
+  handleTodayClick: function(event){},
+  
+  // Fast-forwards to the next months
+  handleNextClick: function(event){
+    if (event) event.stop();
+    this.date.setMonth(this.date.getMonth() + 1);
+    this.populate();
+  },
+  
+  // Fast-forwards to the previous months
+  handlePreviousClick: function(event){
+    if (event) event.stop();
+    this.date.setMonth(this.date.getMonth() - 1);
+    this.populate();
   },
   
   _disableTextSelection: function() {
