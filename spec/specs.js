@@ -30,8 +30,8 @@ describe("Initialization", {
   },
   
   'options are sane': function(){
-    Instance = new Timeframe('calendar', {months: 42});
-    value_of(Instance.options.months).should_be(42);
+    Instance = new Timeframe('calendar', {weekOffset: 42});
+    value_of(Instance.options.weekOffset).should_be(42);
   }
 });
 
