@@ -1,6 +1,3 @@
-* Today button
 * Reset button
-* Past month view
-* Future month view
 * Implement options.earliest & options.latest
 * Implement maxRange
