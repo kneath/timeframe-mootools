@@ -34,6 +34,10 @@ var Timeframe = new Class({
   fields: {},
   // Keeps a running count of how many months are in this.calendars
   months: 0,
+  // Hash containing the start and end dates for the rnage
+  range: {},
+  isMousedown: false,
+  isDragging: false,
   
   initialize: function(element, options){
     // Setup & Abandon if no element
@@ -55,6 +59,7 @@ var Timeframe = new Class({
     this.options.months.times(this.createCalendar.bind(this));
     
     this.date = new Date();
+    this.range = new Hash();
     this.populate();
     this.register();
   },
@@ -197,6 +202,24 @@ var Timeframe = new Class({
     this.element.adopt(fieldsContainer);
     
     // TODO: this.parseField('start').refreshField('start').parseField('end').refreshField('end').initDate = new Date(this.date);
+  },
+  
+  /*
+    Function: markEndPoint
+    Marks a given date as the endpoint for the range
+  */
+  markEndPoint: function(date){
+    // Any endpoints yet?
+    if (this.range.get('start') == null){
+      this.range.set('start', date);
+    // If the date is further than our start date, we just set the end date
+    }else if(this.range.get('start') <  date){
+        this.range.set('end', date);
+    // Otherwise, we swap the dates
+    }else{
+      this.range.set('end', this.range.get('start'));
+      this.range.set('start', date);
+    }
   }
 });
 
@@ -226,7 +249,13 @@ Timeframe.Events = {
   
   // Listens to mousedowns inside this.element
   handleMouseDown: function(event){
-    // TODO
+    var element = $(event.target);
+    var el;
+    // Are we clicking/dragging a date?
+    if (el = element.getParent('td.selectable')){
+      this.isMouseDown = this.isDragging = true;
+      this.markEndPoint(el.retrieve('date'));
+    }
   },
   
   // Listens to mouseovers inside this.element

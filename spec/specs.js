@@ -163,4 +163,39 @@ describe("Week offset by 2 days", {
     value_of(headings[5].get('abbr')).should_be('Sunday')
     value_of(headings[6].get('abbr')).should_be('Monday')
   }
-})
+});
+
+describe("Ranges", {
+  'before all': function(){
+    setupHTML();
+    Instance = new Timeframe('calendar', { weekOffset: 2 });
+    DateEarlier = new Date(2008, 10, 5, 12);
+    DateLater = new Date(2008, 10, 7, 12);
+  },
+  'after all': function(){
+    teardownHTML();
+  },
+  
+  'sets the start of a range if it is empty': function(){
+    Instance.range.empty();
+    Instance.markEndPoint(DateEarlier);
+    value_of(Instance.range.get('start')).should_be(DateEarlier);
+    value_of(Instance.range.get('end')).should_be(null);
+  },
+  
+  'sets the end of a range if you already set the start, and are after it': function(){
+    Instance.range.empty();
+    Instance.markEndPoint(DateEarlier);
+    Instance.markEndPoint(DateLater);
+    value_of(Instance.range.get('start')).should_be(DateEarlier);
+    value_of(Instance.range.get('end')).should_be(DateLater);
+  },
+  
+  'swaps the endpoints of a range if you mark a point before the start': function(){
+    Instance.range.empty();
+    Instance.markEndPoint(DateLater);
+    Instance.markEndPoint(DateEarlier);
+    value_of(Instance.range.get('start')).should_be(DateEarlier);
+    value_of(Instance.range.get('end')).should_be(DateLater);
+  }
+});
