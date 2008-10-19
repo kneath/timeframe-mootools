@@ -331,7 +331,11 @@ Timeframe.Events = {
   handleResetClick: function(event){},
   
   // Fast-forwards to today in center
-  handleTodayClick: function(event){},
+  handleTodayClick: function(event){
+    if (event) event.stop();
+    this.date.setMonth((new Date()).getMonth())
+    this.populate();
+  },
   
   // Fast-forwards to the next months
   handleNextClick: function(event){
