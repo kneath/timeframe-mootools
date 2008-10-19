@@ -38,6 +38,8 @@ var Timeframe = new Class({
   range: {},
   isMousedown: false,
   isDragging: false,
+  // Click dragging is when someone clicks on one endpoint, then clicks on the other without dragging in between
+  isClickDragging: false,
   
   initialize: function(element, options){
     // Setup & Abandon if no element
@@ -254,12 +256,11 @@ var Timeframe = new Class({
 
 /*
   Timeframe.Events
-  Contains all of the events based functionality for Timeframe. Mixed into Timeframe class.
+  Contains all of the DOM events based functionality for Timeframe. Mixed into Timeframe class.
 */
 Timeframe.Events = {
   // Registers the events
   register: function(){
-    document.addEvent('click', this.handleClick.bind(this));
     this.element.addEvent('mousedown', this.handleMouseDown.bind(this));
     this.element.addEvent('mouseover', this.handleMouseOver.bind(this));
     document.addEvent('mouseup', this.handleMouseUp.bind(this));
@@ -272,11 +273,6 @@ Timeframe.Events = {
     this._disableTextSelection();
   },
   
-  // Listens to all clicks for the document
-  handleClick: function(event){
-    // TODO
-  },
-  
   // Listens to mousedowns inside this.element
   handleMouseDown: function(event){
     var element = $(event.target);
@@ -285,7 +281,8 @@ Timeframe.Events = {
     if (el = element.hasClass('selectable') ? element : element.getParent('td.selectable')){
       // Clear the range if we're clicking to make a new range
       if (!this.isDragging && this.range.get('start') != null && this.range.get('end') != null) this.range.empty();
-      this.isMouseDown = this.isDragging = true;
+       this.isClickDragging = this.range.get('begining') == null
+      this.isMouseDown = this.isDragging= true;
       this.markEndPoint(el.retrieve('date'));
     }
   },
@@ -295,15 +292,16 @@ Timeframe.Events = {
     var element = $(event.target);
     var el;
     // We dragging over a selectable thing?
-    if ((el = element.hasClass('selectable') ? element : element.getParent('td.selectable')) && this.isDragging){
+    if (this.isDragging && (el = element.hasClass('selectable') ? element : element.getParent('td.selectable'))){
+      if (this.range.get('begining') != el.retrieve('date') && this.isMouseDown) this.isClickDragging = false;
       this.markEndPoint(el.retrieve('date'));
     }
   },
   
   // Listens to all mouseups for the document
   handleMouseUp: function(event){
+    if (!this.isClickDragging) this.isDragging = false;
     this.isMouseDown = false;
-    this.isDragging = false;
     this.fireEvent('rangeChange');
   },
   
