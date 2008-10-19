@@ -240,6 +240,7 @@ Timeframe.Events = {
       field.addEvent('blur', this.handleFieldBlur.bind(this));
       field.addEvent('keyup', this.handleFieldChange.bind(this));
     }, this);
+    this._disableTextSelection();
   },
   
   // Listens to all clicks for the document
@@ -281,6 +282,19 @@ Timeframe.Events = {
   // Handles when a field's value changes
   handleFieldChange: function(){
     
+  },
+  
+  _disableTextSelection: function() {
+    if (Browser.Engine.trident){
+      this.element.onselectstart = function(event) {
+        if (!/input|textarea/i.test((new Event(event)).target.tagName)) return false;
+      }
+    }else{
+      this.element.onmousedown = function(event) {
+        if (!/input|textarea/i.test((new Event(event)).target.tagName)) return false;
+      }
+    }
+    return this;
   }
 }
 Timeframe.implement(Timeframe.Events);
