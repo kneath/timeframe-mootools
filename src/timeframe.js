@@ -169,7 +169,7 @@ var Timeframe = new Class({
           'text': date.getDate(),
           'class': inactive || 'active'
         });
-        if ((this.options.earliest && date < this.earliest) || (this.latest && date > this.latest)){
+        if ((this.options.earliest && date < this.options.earliest) || (this.options.latest && date > this.options.latest)){
           dayCell.addClass('unselectable');
         }else{
           dayCell.addClass('selectable');
@@ -239,6 +239,8 @@ var Timeframe = new Class({
     Marks a given date as the endpoint for the range
   */
   markEndPoint: function(date){
+    if (date < this.options.earliest || date > this.options.latest) return;
+    
     // Are we just starting?
     if (this.range.get('begining') == null){
       this.range.set('start', date);
