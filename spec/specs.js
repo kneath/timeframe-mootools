@@ -32,6 +32,15 @@ describe("Initialization", {
   'options are sane': function(){
     Instance = new Timeframe('calendar', {weekOffset: 42});
     value_of(Instance.options.weekOffset).should_be(42);
+  },
+  
+  'earliest and latest parse strings': function(){
+    firstDate = new Date(1954, 6, 1, 12); // Remember, months are 0 based
+    lastDate = new Date(1984, 6, 17, 12);
+    Instance = new Timeframe('calendar', {earliest: "July 1, 1954", latest: "July 17, 1984"});
+    
+    value_of(Instance.options.earliest).should_be(firstDate);
+    value_of(Instance.options.latest).should_be(lastDate);
   }
 });
 

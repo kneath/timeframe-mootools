@@ -54,24 +54,36 @@ var Timeframe = new Class({
     this.element.addClass('timeframe_calendar')
     
     // Initial Setup
-    this.setOptions(options);
     Timeframes.push(this);
-    
-    this._buildButtons();
-    
-    this.fields = new Hash({ start: $(this.options.startField), end: $(this.options.endField) });
-    this._buildFields();
-    
+    this.setOptions(options);
     this.element.adopt(new Element('div', {id: this.element.id + "_container"}))
     
-    this.options.months.times(this.createCalendar.bind(this));
+    // Set earliest & latest dates
+    if (this.options.earliest != null) this.options.earliest = Date.parseToObject(this.options.earliest);
+    if (this.options.latest != null) this.options.latest = Date.parseToObject(this.options.latest);
     
+    // Build up the buttons & fields
+    this.fields = new Hash({ start: $(this.options.startField), end: $(this.options.endField) });
+    this._buildButtons();
+    this._buildFields();
+    
+    // Initialize the date & populate the calendars
+    this.options.months.times(this.createCalendar.bind(this));
     this.date = new Date();
+    // Move the date back if we're going to show past the latest or earliest
+    var endDate = new Date(this.date);
+    var monthsShownToRight = (this.months/2).toInt();
+    var monthsShownToLeft = (this.months/2).toInt();
+    if (this.options.latest != null && this.options.latest < endDate.setMonth(this.date.getMonth() + monthsShownToRight))
+      this.date.setMonth(this.options.latest.getMonth() - monthsShownToRight);
+    if (this.options.earliest != null && this.options.earliest > endDate.setMonth(this.date.getMonth() - monthsShownToLeft))
+      this.date.setMonth(this.options.earliest.getMonth() + monthsShownToLeft);
     this.originalDate = new Date(this.date);
     this.range = new Hash();
     this.populate();
-    this.register();
     
+    // Register event handlers
+    this.register();
     this.addEvent('rangeChange', this.handleRangeChange.bind(this));
   },
   
@@ -386,6 +398,14 @@ Timeframe.Events = {
 }
 Timeframe.implement(Timeframe.Events);
 
+$extend(Date, {
+  parseToObject: function(string) {
+    var date = Date.parse(string);
+    if (!date) return null;
+    date = new Date(date);
+    return (date == 'Invalid Date' || date == 'NaN') ? null : date.neutral();
+  }
+})
 $extend(Date.prototype, {
   neutral: function() {
     return new Date(this.getFullYear(), this.getMonth(), this.getDate(), 12);
