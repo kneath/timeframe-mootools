@@ -62,6 +62,8 @@ var Timeframe = new Class({
     this.range = new Hash();
     this.populate();
     this.register();
+    
+    this.addEvent('rangeChange', this.handleRangeChange.bind(this));
   },
   
   /*
@@ -220,6 +222,22 @@ var Timeframe = new Class({
       this.range.set('end', this.range.get('start'));
       this.range.set('start', date);
     }
+    this.fireEvent('rangeChange');
+  },
+  
+  /*
+    Function handleRangeChange
+    Gets fired whenever the date range changes. Responsible for updating the UI.
+  */
+  handleRangeChange: function(){
+    this.element.getElements('td').each(function(td){
+      if (td.retrieve('date') < this.range.get('start') || td.retrieve('date') > this.range.get('end')) return;
+      
+      if (td.retrieve('date') == this.range.get('start')) td.addClass('startrange')
+      if (td.retrieve('date') == this.range.get('end')) td.addClass('endrange');
+      if (this.isDragging) td.addClass('stuck');
+      else td.addClass('selected');
+    }, this);
   }
 });
 
@@ -253,7 +271,7 @@ Timeframe.Events = {
     var element = $(event.target);
     var el;
     // Are we clicking/dragging a date?
-    if (el = element.getParent('td.selectable')){
+    if (el = element.hasClass('selectable') ? element : element.getParent('td.selectable')){
       this.isMouseDown = this.isDragging = true;
       this.markEndPoint(el.retrieve('date'));
     }
@@ -261,12 +279,18 @@ Timeframe.Events = {
   
   // Listens to mouseovers inside this.element
   handleMouseOver: function(event){
-    // TODO
+    var element = $(event.target);
+    var el;
+    // We dragging over a selectable thing?
+    if ((el = element.hasClass('selectable') ? element : element.getParent('td.selectable')) && this.isDragging){
+      this.markEndPoint(el.retrieve('date'));
+    }
   },
   
   // Listens to all mouseups for the document
   handleMouseUp: function(event){
-    // TODO
+    this.isMouseDown = false;
+    this.isDragging = false;
   },
   
   // Handles when a field gains focus
