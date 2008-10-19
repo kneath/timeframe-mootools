@@ -141,4 +141,26 @@ describe("HTML Scaffolding with custom buttons & fields", {
     value_of($('ooglyStart')).should_be(Instance.fields.start)
     value_of($('ooglyEnd')).should_be(Instance.fields.end)
   }
+});
+
+describe("Week offset by 2 days", {
+  'before all': function(){
+    setupHTML();
+    Instance = new Timeframe('calendar', { weekOffset: 2 });
+  },
+  'after all': function(){
+    teardownHTML();
+  },
+  
+  
+  'lists out the seven days of the week': function(){
+    var headings = Instance.element.getElement('table').getElements('th');
+    value_of(headings[0].get('abbr')).should_be('Tuesday')
+    value_of(headings[1].get('abbr')).should_be('Wednesday')
+    value_of(headings[2].get('abbr')).should_be('Thursday')
+    value_of(headings[3].get('abbr')).should_be('Friday')
+    value_of(headings[4].get('abbr')).should_be('Saturday')
+    value_of(headings[5].get('abbr')).should_be('Sunday')
+    value_of(headings[6].get('abbr')).should_be('Monday')
+  }
 })
