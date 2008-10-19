@@ -211,15 +211,17 @@ var Timeframe = new Class({
     Marks a given date as the endpoint for the range
   */
   markEndPoint: function(date){
-    // Any endpoints yet?
-    if (this.range.get('start') == null){
+    // Are we just starting?
+    if (this.range.get('begining') == null){
       this.range.set('start', date);
-    // If the date is further than our start date, we just set the end date
+      this.range.set('begining', date);
+    // If the date is further than our start date
     }else if(this.range.get('start') <  date){
-        this.range.set('end', date);
-    // Otherwise, we swap the dates
+      if (this.range.get('start') < this.range.get('begining')) this.range.set('start', this.range.get('begining'));
+      this.range.set('end', date);
+    // Otherwise the date is before our start date
     }else{
-      this.range.set('end', this.range.get('start'));
+      if (date >= this.range.get('begining') || this.range.get('end') == null) this.range.set('end', this.range.get('start'));
       this.range.set('start', date);
     }
     this.fireEvent('rangeChange');
@@ -231,6 +233,9 @@ var Timeframe = new Class({
   */
   handleRangeChange: function(){
     this.element.getElements('td').each(function(td){
+      td.set('class', td.retrieve('baseClass'));
+
+      // Are we inside the range?
       if (td.retrieve('date') < this.range.get('start') || td.retrieve('date') > this.range.get('end')) return;
       
       if (td.retrieve('date') == this.range.get('start')) td.addClass('startrange')

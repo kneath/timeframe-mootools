@@ -169,8 +169,11 @@ describe("Ranges", {
   'before all': function(){
     setupHTML();
     Instance = new Timeframe('calendar', { weekOffset: 2 });
-    DateEarlier = new Date(2008, 10, 5, 12);
-    DateLater = new Date(2008, 10, 7, 12);
+    DateEarliest = new Date(2008, 10, 5, 12);
+    DateEarlier = new Date(2008, 10, 6, 12)
+    DateMiddle = new Date(2008, 10, 7, 12);
+    DateLater = new Date(2008, 10, 8, 12);
+    DateLatest = new Date(2008, 10, 9, 12);
   },
   'after all': function(){
     teardownHTML();
@@ -178,24 +181,43 @@ describe("Ranges", {
   
   'sets the start of a range if it is empty': function(){
     Instance.range.empty();
-    Instance.markEndPoint(DateEarlier);
-    value_of(Instance.range.get('start')).should_be(DateEarlier);
+    Instance.markEndPoint(DateEarliest);
+    value_of(Instance.range.get('start')).should_be(DateEarliest);
     value_of(Instance.range.get('end')).should_be(null);
   },
   
   'sets the end of a range if you already set the start, and are after it': function(){
     Instance.range.empty();
-    Instance.markEndPoint(DateEarlier);
-    Instance.markEndPoint(DateLater);
-    value_of(Instance.range.get('start')).should_be(DateEarlier);
-    value_of(Instance.range.get('end')).should_be(DateLater);
+    Instance.markEndPoint(DateEarliest);
+    Instance.markEndPoint(DateLatest);
+    value_of(Instance.range.get('start')).should_be(DateEarliest);
+    value_of(Instance.range.get('end')).should_be(DateLatest);
   },
   
   'swaps the endpoints of a range if you mark a point before the start': function(){
     Instance.range.empty();
+    Instance.markEndPoint(DateLatest);
+    Instance.markEndPoint(DateEarliest);
+    value_of(Instance.range.get('start')).should_be(DateEarliest);
+    value_of(Instance.range.get('end')).should_be(DateLatest);
+  },
+  
+  'contracts the range if you move back from the latest': function(){
+    Instance.range.empty();
+    Instance.markEndPoint(DateEarliest);
+    Instance.markEndPoint(DateLatest);
+    Instance.markEndPoint(DateLater);
+    value_of(Instance.range.get('start')).should_be(DateEarliest);
+    value_of(Instance.range.get('end')).should_be(DateLater);
+  },
+  
+  'extends a range forward from begining if going forward/backward/forward': function(){
+    Instance.range.empty();
+    Instance.markEndPoint(DateMiddle);
     Instance.markEndPoint(DateLater);
     Instance.markEndPoint(DateEarlier);
-    value_of(Instance.range.get('start')).should_be(DateEarlier);
-    value_of(Instance.range.get('end')).should_be(DateLater);
+    Instance.markEndPoint(DateLatest);
+    value_of(Instance.range.get('start')).should_be(DateMiddle);
+    value_of(Instance.range.get('end')).should_be(DateLatest);
   }
 });
