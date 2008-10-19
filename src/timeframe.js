@@ -36,6 +36,10 @@ var Timeframe = new Class({
   buttons: {},
   // Keeps a running count of how many months are in this.calendars
   months: 0,
+  // Keeps the current (centermost) date used
+  date: null,
+  // Keeps a copy of the date the calendar was at when it was initialized (for resetting)
+  originalDate: null,
   // Hash containing the start and end dates for the rnage
   range: {},
   isMousedown: false,
@@ -63,6 +67,7 @@ var Timeframe = new Class({
     this.options.months.times(this.createCalendar.bind(this));
     
     this.date = new Date();
+    this.originalDate = new Date(this.date);
     this.range = new Hash();
     this.populate();
     this.register();
@@ -337,7 +342,13 @@ Timeframe.Events = {
     
   },
   
-  handleResetClick: function(event){},
+  // Resets the calendar to it's initial state
+  handleResetClick: function(event){
+    this.range.empty();
+    this.date.setMonth(this.originalDate.getMonth());
+    this.populate();
+    this._updateCalendarDisplay();
+  },
   
   // Fast-forwards to today in center
   handleTodayClick: function(event){
