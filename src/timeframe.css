@@ -114,13 +114,13 @@ div.timeframe_calendar table {
         cursor: col-resize;
       }
       div.timeframe_calendar tbody td.startrange {
-        background-image: url(../images/start.png);
+        background-image: url(images/start.png);
       }
       div.timeframe_calendar tbody td.endrange {
-        background-image: url(../images/end.png);
+        background-image: url(images/end.png);
       }
       div.timeframe_calendar tbody td.startendrange {
-        background-image: url(../images/startend.png);
+        background-image: url(images/startend.png);
       }
       /* Today */
       div.timeframe_calendar tbody td.today {
@@ -159,7 +159,7 @@ div.timeframe_calendar table {
         width: 0;
       }
         div.timeframe_calendar tbody td span.clear span {
-          background-image: url(../images/closebox.png);
+          background-image: url(images/closebox.png);
           cursor: pointer;
           display: block;
           height: 30px;
@@ -170,5 +170,5 @@ div.timeframe_calendar table {
           width: 30px;
         }
           div.timeframe_calendar tbody td span.clear span.active {
-            background-image: url(../images/closebox_selected.png);
+            background-image: url(images/closebox_selected.png);
           }

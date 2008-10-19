@@ -234,6 +234,12 @@ var Timeframe = new Class({
   handleRangeChange: function(){
     this.element.getElements('td').each(function(td){
       td.set('class', td.retrieve('baseClass'));
+      
+      // Did we just create a singlular range?
+      if (this.range.get('start') != null && this.range.get('end') == null){
+        if (td.retrieve('date') == this.range.get('start')) td.addClass('startendrange')
+        return;
+      }
 
       // Are we inside the range?
       if (td.retrieve('date') < this.range.get('start') || td.retrieve('date') > this.range.get('end')) return;
@@ -277,6 +283,8 @@ Timeframe.Events = {
     var el;
     // Are we clicking/dragging a date?
     if (el = element.hasClass('selectable') ? element : element.getParent('td.selectable')){
+      // Clear the range if we're clicking to make a new range
+      if (!this.isDragging && this.range.get('start') != null && this.range.get('end') != null) this.range.empty();
       this.isMouseDown = this.isDragging = true;
       this.markEndPoint(el.retrieve('date'));
     }
@@ -296,6 +304,7 @@ Timeframe.Events = {
   handleMouseUp: function(event){
     this.isMouseDown = false;
     this.isDragging = false;
+    this.fireEvent('rangeChange');
   },
   
   // Handles when a field gains focus
