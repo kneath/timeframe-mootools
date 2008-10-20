@@ -244,7 +244,7 @@ var Timeframe = new Class({
     Marks a given date as the endpoint for the range
   */
   markEndPoint: function(date){
-    if (date < this.options.earliest || date > this.options.latest) return;
+    if ((this.options.earliest != null && date < this.options.earliest) || (this.options.latest != null && date > this.options.latest)) return;
     
     // Are we just starting?
     if (this.range.get('begining') == null){
