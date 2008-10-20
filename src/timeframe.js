@@ -6,6 +6,11 @@
     MIT-style license.
 */
 
+var Locale = new Hash({
+  monthNames: (typeof Date.CultureInfo == 'undefined' ? 'January February March April May June July August September October November December'.split(' ') : Date.CultureInfo.monthNames),
+  dayNames: (typeof Date.CultureInfo == 'undefined' ? 'Sunday Monday Tuesday Wednesday Thursday Friday Saturday'.split(' ') : Date.CultureInfo.dayNames)
+})
+
 var Timeframes = [];
 
 var Timeframe = new Class({
@@ -14,8 +19,8 @@ var Timeframe = new Class({
   options: {
     months: 2,
     format: (typeof Date.CultureInfo == 'undefined' ? '%b %d, %Y' : Date.CultureInfo.formatPatterns.shortDate),
-    monthNames: (typeof Date.CultureInfo == 'undefined' ? 'January February March April May June July August September October November December'.split(' ') : Date.CultureInfo.monthNames),
-    dayNames: (typeof Date.CultureInfo == 'undefined' ? 'Sunday Monday Tuesday Wednesday Thursday Friday Saturday'.split(' ') : Date.CultureInfo.dayNames),
+    monthNames: Locale.monthNames,
+    dayNames: Locale.dayNames,
     weekOffset: (typeof Date.CultureInfo == 'undefined' ? 0 : Date.CultureInfo.firstDayOfWeek),
     startField: null,
     endField: null,
@@ -263,6 +268,7 @@ var Timeframe = new Class({
   */
   handleRangeChange: function(){
     this._updateCalendarDisplay();
+    this._updateFieldDisplays();
   },
   
   // Responsible for updating the classes & display of the active dates on the calendar
@@ -284,6 +290,12 @@ var Timeframe = new Class({
       if (this.isDragging) td.addClass('stuck');
       else td.addClass('selected');
     }, this);
+  },
+  
+  // Responsible for putting the start/end dates into the fields
+  _updateFieldDisplays: function(){
+    if (this.range.get('start') != null) this.fields.start.value = this.range.get('start').strftime(this.options.format);
+    if (this.range.get('end') != null) this.fields.end.set('value', this.range.get('end').strftime(this.options.format));
   }
 });
 
@@ -409,7 +421,36 @@ $extend(Date, {
   }
 })
 $extend(Date.prototype, {
+  strftime: function(format) {
+    var day = this.getDay(), month = this.getMonth();
+    var hours = this.getHours(), minutes = this.getMinutes();
+    function pad(num) { return num.toString().pad(2, '0'); };
+    return format.replace(/\%([aAbBcdHImMpSwyY])/g, function(part) {
+      switch(part[1]) {
+        case 'a': return Locale.get('dayNames')[day].substr(0, 3); break;
+        case 'A': return Locale.get('dayNames')[day]; break;
+        case 'b': return Locale.get('monthNames')[month].substr(0, 3); break;
+        case 'B': return Locale.get('monthNames')[month].escapeHTML(); break;
+        case 'c': return this.toString(); break;
+        case 'd': return pad(this.getDate()); break;
+        case 'H': return pad(hours); break;
+        case 'I': return (hours % 12 == 0) ? 12 : pad(hours % 12); break;
+        case 'm': return pad(month + 1); break;
+        case 'M': return pad(minutes); break;
+        case 'p': return hours >= 12 ? 'PM' : 'AM'; break;
+        case 'S': return pad(this.getSeconds()); break;
+        case 'w': return day; break;
+        case 'y': return pad(this.getFullYear() % 100); break;
+        case 'Y': return this.getFullYear().toString(); break;
+      }
+    }.bind(this));
+  },
+  
   neutral: function() {
     return new Date(this.getFullYear(), this.getMonth(), this.getDate(), 12);
   }
 });
+
+String.prototype.pad = function(l, s, t){
+  return s || (s = " "), (l -= this.length) > 0 ? (s = new Array(Math.ceil(l / s.length) + 1).join(s)).substr(0, t = !t ? l : t == 1 ? 0 : Math.ceil(l / 2)) + this + s.substr(0, l - t) : this;
+};
