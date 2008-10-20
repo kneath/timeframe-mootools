@@ -6,7 +6,7 @@ A port of Stephen Celis's [Timeframe for Prototype](http://github.com/stephencel
 
 ## A work in progress
 
-Just the start here. Don't count on much working yet.
+This is still a work in process, but it should be mostly working at this point.
 
 ## The Code
 
