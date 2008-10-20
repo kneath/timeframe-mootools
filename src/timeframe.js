@@ -310,9 +310,7 @@ Timeframe.Events = {
     this.element.addEvent('mouseover', this.handleMouseOver.bind(this));
     document.addEvent('mouseup', this.handleMouseUp.bind(this));
     this.fields.each(function(field){
-      field.addEvent('focus', this.handleFieldFocus.bind(this));
       field.addEvent('blur', this.handleFieldBlur.bind(this));
-      field.addEvent('keyup', this.handleFieldChange.bind(this));
     }, this);
     this.buttons.today.element.addEvent('click', this.handleTodayClick.bind(this));
     this.buttons.reset.element.addEvent('click', this.handleResetClick.bind(this));
@@ -353,19 +351,23 @@ Timeframe.Events = {
     this.fireEvent('rangeChange');
   },
   
-  // Handles when a field gains focus
-  handleFieldFocus: function(){
-    
-  },
-  
-  // Handles when a field loses focus
-  handleFieldBlur: function(){
-    
-  },
-  
   // Handles when a field's value changes
-  handleFieldChange: function(){
+  handleFieldBlur: function(event){
+    var el = $(event.target);
+    var date = Date.parseToObject(el.value);
+    if (date == null) return;
     
+    if (el.hasClass('start')){
+      if (date < this.options.earliest) return;
+      this.range.set('start', date)
+      if (this.range.get('begining') == null) this.range.set('begining', date);
+      this.fireEvent('rangeChange');
+    }
+    if (el.hasClass('end')){
+      if (date > this.options.latest) return;
+      this.range.set('end', date)
+      this.fireEvent('rangeChange');
+    }
   },
   
   // Resets the calendar to it's initial state
