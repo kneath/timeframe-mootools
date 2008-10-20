@@ -244,7 +244,7 @@ var Timeframe = new Class({
     Marks a given date as the endpoint for the range
   */
   markEndPoint: function(date){
-    if (date < this.options.earliest || date > this.options.latest) return;
+    if ((this.options.earliest != null && date < this.options.earliest) || (this.options.latest != null && date > this.options.latest)) return;
     
     // Are we just starting?
     if (this.range.get('begining') == null){
@@ -259,6 +259,15 @@ var Timeframe = new Class({
       if (date >= this.range.get('begining') || this.range.get('end') == null) this.range.set('end', this.range.get('start'));
       this.range.set('start', date);
     }
+    
+    // Don't know how we get to this state, but sometimes we do. When beginning point is not within start/end point
+    if (this.range.get('start') < this.range.get('begining') && this.range.get('end') < this.range.get('begining')){
+      this.range.set('end', this.range.get('begining'));
+    }
+    if (this.range.get('start') > this.range.get('begining') && this.range.get('end') > this.range.get('begining')){
+      this.range.set('start', this.range.get('begining'));
+    }
+    
     this.fireEvent('rangeChange');
   },
   
