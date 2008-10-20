@@ -259,6 +259,15 @@ var Timeframe = new Class({
       if (date >= this.range.get('begining') || this.range.get('end') == null) this.range.set('end', this.range.get('start'));
       this.range.set('start', date);
     }
+    
+    // Don't know how we get to this state, but sometimes we do. When beginning point is not within start/end point
+    if (this.range.get('start') < this.range.get('begining') && this.range.get('end') < this.range.get('begining')){
+      this.range.set('end', this.range.get('begining'));
+    }
+    if (this.range.get('start') > this.range.get('begining') && this.range.get('end') > this.range.get('begining')){
+      this.range.set('start', this.range.get('begining'));
+    }
+    
     this.fireEvent('rangeChange');
   },
   
