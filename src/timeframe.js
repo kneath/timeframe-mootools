@@ -424,7 +424,6 @@ $extend(Date, {
 });
 $extend(Date.prototype, {
   strftime: function(format) {
-    console.log(format);
     var day = this.getDay(), month = this.getMonth();
     var hours = this.getHours(), minutes = this.getMinutes();
     function pad(num) { return num.toString().pad(2, '0');};
@@ -455,6 +454,6 @@ $extend(Date.prototype, {
 });
 
 String.prototype.pad = function(l, s, t){
-  console.log(l, s, t);
-  return s || (s = " "), (l -= this.length) > 0 ? (s = new Array(Math.ceil(l / s.length) + 1).join(s)).substr(0, t = !t ? l : t == 1 ? 0 : Math.ceil(l / 2)) + this + s.substr(0, l - t) : this;
+  s = s || " ";
+  return (l -= this.length) > 0 ? (s = new Array(Math.ceil(l / s.length) + 1).join(s)).substr(0, t = !t ? l : t == 1 ? 0 : Math.ceil(l / 2)) + this + s.substr(0, l - t) : this;
 };
