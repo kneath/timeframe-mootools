@@ -9,7 +9,7 @@
 var Locale = new Hash({
   monthNames: (typeof Date.CultureInfo == 'undefined' ? 'January February March April May June July August September October November December'.split(' ') : Date.CultureInfo.monthNames),
   dayNames: (typeof Date.CultureInfo == 'undefined' ? 'Sunday Monday Tuesday Wednesday Thursday Friday Saturday'.split(' ') : Date.CultureInfo.dayNames)
-})
+});
 
 var Timeframes = [];
 
@@ -30,7 +30,7 @@ var Timeframe = new Class({
     resetButton: null,
     earliest: null,
     latest: null,
-    maxRange: false,
+    maxRange: false
   },
   
   // Keeps an array of the calendar tables available
@@ -56,12 +56,12 @@ var Timeframe = new Class({
     // Setup & Abandon if no element
     this.element = $(element);
     if (this.element == null) return;
-    this.element.addClass('timeframe_calendar')
+    this.element.addClass('timeframe_calendar');
     
     // Initial Setup
     Timeframes.push(this);
     this.setOptions(options);
-    this.element.adopt(new Element('div', {id: this.element.id + "_container"}))
+    this.element.adopt(new Element('div', {id: this.element.id + "_container"}));
     
     // Set earliest & latest dates
     if (this.options.earliest != null) this.options.earliest = Date.parseToObject(this.options.earliest);
@@ -107,11 +107,11 @@ var Timeframe = new Class({
     calendar.adopt(caption);
     
     // Insert the headings
-    var thead = new Element('thead')
+    var thead = new Element('thead');
     var row = new Element('tr');
     this.options.dayNames.length.times(function(index){
-      var dayName = this.options.dayNames[(index + this.options.weekOffset) % 7]
-      var cell = new Element('th', {scope: 'col', abbr: dayName, text: dayName.substr(0,1)})
+      var dayName = this.options.dayNames[(index + this.options.weekOffset) % 7];
+      var cell = new Element('th', {scope: 'col', abbr: dayName, text: dayName.substr(0,1)});
       row.adopt(cell);
     }, this);
     thead.adopt(row);
@@ -123,7 +123,7 @@ var Timeframe = new Class({
       var row = new Element('tr');
       this.options.dayNames.length.times(function(){
         row.adopt(new Element('td'));
-      })
+      });
       tbody.adopt(row);
     }, this);
     calendar.adopt(tbody);
@@ -201,12 +201,12 @@ var Timeframe = new Class({
       today:    { label: 'T',      element: $(this.options.todayButton) },
       reset:    { label: 'R',      element: $(this.options.resetButton) },
       next:     { label: '→', element: $(this.options.nextButton) }
-    })
+    });
     
     var buttonList = new Element('ul', {id: this.element.id + '_menu', className: 'timeframe_menu'});
     this.buttons.each(function(value, key){
       if (value.element != null){
-        value.element.addClass('timeframe_button').addClass(key)
+        value.element.addClass('timeframe_button').addClass(key);
       }else{
         var item = new Element('li');
         var button = new Element('a', {'class': 'timeframe_button ' + key, href: '#', text: value.label});
@@ -216,7 +216,7 @@ var Timeframe = new Class({
       }
     }, this);
     
-    this.element.grab(buttonList, 'top')
+    this.element.grab(buttonList, 'top');
   },
   
   // Internal function to build the fields used for start/end dates
@@ -278,14 +278,14 @@ var Timeframe = new Class({
       
       // Did we just create a singlular range?
       if (this.range.get('start') != null && this.range.get('end') == null){
-        if (td.retrieve('date') == this.range.get('start')) td.addClass('startendrange')
+        if (td.retrieve('date') == this.range.get('start')) td.addClass('startendrange');
         return;
       }
 
       // Are we inside the range?
       if (td.retrieve('date') < this.range.get('start') || td.retrieve('date') > this.range.get('end')) return;
       
-      if (td.retrieve('date') == this.range.get('start')) td.addClass('startrange')
+      if (td.retrieve('date') == this.range.get('start')) td.addClass('startrange');
       if (td.retrieve('date') == this.range.get('end')) td.addClass('endrange');
       if (this.isDragging) td.addClass('stuck');
       else td.addClass('selected');
@@ -327,7 +327,7 @@ Timeframe.Events = {
     if (el = element.hasClass('selectable') ? element : element.getParent('td.selectable')){
       // Clear the range if we're clicking to make a new range
       if (!this.isDragging && this.range.get('start') != null && this.range.get('end') != null) this.range.empty();
-       this.isClickDragging = this.range.get('begining') == null
+       this.isClickDragging = this.range.get('begining') == null;
       this.isMouseDown = this.isDragging= true;
       this.markEndPoint(el.retrieve('date'));
     }
@@ -359,13 +359,13 @@ Timeframe.Events = {
     
     if (el.hasClass('start')){
       if (date < this.options.earliest) return;
-      this.range.set('start', date)
+      this.range.set('start', date);
       if (this.range.get('begining') == null) this.range.set('begining', date);
       this.fireEvent('rangeChange');
     }
     if (el.hasClass('end')){
       if (date > this.options.latest) return;
-      this.range.set('end', date)
+      this.range.set('end', date);
       this.fireEvent('rangeChange');
     }
   },
@@ -381,7 +381,7 @@ Timeframe.Events = {
   // Fast-forwards to today in center
   handleTodayClick: function(event){
     if (event) event.stop();
-    this.date.setMonth((new Date()).getMonth())
+    this.date.setMonth((new Date()).getMonth());
     this.populate();
   },
   
@@ -402,16 +402,16 @@ Timeframe.Events = {
   _disableTextSelection: function() {
     if (Browser.Engine.trident){
       this.element.onselectstart = function(event) {
-        if (!/input|textarea/i.test((new Event(event)).target.tagName)) return false;
-      }
+        if (!(/input|textarea/i).test((new Event(event)).target.tagName)) return false;
+      };
     }else{
       this.element.onmousedown = function(event) {
-        if (!/input|textarea/i.test((new Event(event)).target.tagName)) return false;
-      }
+        if (!(/input|textarea/i).test((new Event(event)).target.tagName)) return false;
+      };
     }
     return this;
   }
-}
+};
 Timeframe.implement(Timeframe.Events);
 
 $extend(Date, {
@@ -421,12 +421,13 @@ $extend(Date, {
     date = new Date(date);
     return (date == 'Invalid Date' || date == 'NaN') ? null : date.neutral();
   }
-})
+});
 $extend(Date.prototype, {
   strftime: function(format) {
+    console.log(format);
     var day = this.getDay(), month = this.getMonth();
     var hours = this.getHours(), minutes = this.getMinutes();
-    function pad(num) { return num.toString().pad(2, '0'); };
+    function pad(num) { return num.toString().pad(2, '0');};
     return format.replace(/\%([aAbBcdHImMpSwyY])/g, function(part) {
       switch(part[1]) {
         case 'a': return Locale.get('dayNames')[day].substr(0, 3); break;
@@ -454,5 +455,6 @@ $extend(Date.prototype, {
 });
 
 String.prototype.pad = function(l, s, t){
+  console.log(l, s, t);
   return s || (s = " "), (l -= this.length) > 0 ? (s = new Array(Math.ceil(l / s.length) + 1).join(s)).substr(0, t = !t ? l : t == 1 ? 0 : Math.ceil(l / 2)) + this + s.substr(0, l - t) : this;
 };
