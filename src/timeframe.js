@@ -203,7 +203,7 @@ var Timeframe = new Class({
       next:     { label: '→', element: $(this.options.nextButton) }
     });
     
-    var buttonList = new Element('ul', {id: this.element.id + '_menu', className: 'timeframe_menu'});
+    var buttonList = new Element('ul', {id: this.element.id + '_menu', 'class': 'timeframe_menu'});
     this.buttons.each(function(value, key){
       if (value.element != null){
         value.element.addClass('timeframe_button').addClass(key);
