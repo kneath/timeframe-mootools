@@ -155,7 +155,9 @@ var Timeframe = new Class({
     
     month.setDate(1);
     this.calendars.each(function(calendar){
-      calendar.getElement('caption').set('text', this.options.monthNames[month.getMonth()] + ' ' + month.getFullYear());
+      var caption =calendar.getElement('caption');
+      caption.set('text', this.options.monthNames[month.getMonth()] + ' ' + month.getFullYear());
+      caption.store('date', new Date(month));
       
       // Setup the iterator and setup inactive to know it's before the month
       var iterator = new Date(month);
@@ -321,6 +323,7 @@ Timeframe.Events = {
     this.fields.each(function(field){
       field.addEvent('blur', this.handleFieldBlur.bind(this));
     }, this);
+    this.element.addEvent('click', this.handleClick.bind(this));
     this.buttons.today.element.addEvent('click', this.handleTodayClick.bind(this));
     this.buttons.reset.element.addEvent('click', this.handleResetClick.bind(this));
     this.buttons.next.element.addEvent('click', this.handleNextClick.bind(this));
@@ -358,6 +361,19 @@ Timeframe.Events = {
     if (!this.isClickDragging) this.isDragging = false;
     this.isMouseDown = false;
     this.fireEvent('rangeChange');
+  },
+  
+  // Listens to all clicks on the element
+  // Used for caption-clicking (month select)
+  handleClick: function(event){
+    if (event && event.target && $(event.target).get('tag') == 'caption'){
+      var caption = $(event.target);
+      var startDate = caption.retrieve('date');
+      var endDate = new Date(startDate.getFullYear(), startDate.getMonth() + 1, 0, 12);
+      this.range.begining = this.range.start = startDate;
+      this.range.end = endDate;
+      this.fireEvent('rangeChange');
+    }
   },
   
   // Handles when a field's value changes
