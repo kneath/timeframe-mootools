@@ -230,3 +230,23 @@ describe("Ranges", {
     value_of(Instance.range.get('end')).should_be(DateLatest);
   }
 });
+
+describe("Formatting", {
+  'before all': function(){
+    setupHTML();
+    Instance = new Timeframe('calendar', { format:"%m/%d/%Y" });
+    FirstDate = new Date(2008, 10, 5, 12);
+    LastDate = new Date(2008, 10, 8, 12);
+  },
+  'after all': function(){
+    teardownHTML();
+  },
+  
+  'should show the format in the start and end dates': function(){
+    Instance.range.empty()
+    Instance.markEndPoint(FirstDate);
+    Instance.markEndPoint(LastDate);
+    value_of(Instance.fields.start.value).should_be("11/05/2008");
+    value_of(Instance.fields.end.value).should_be("11/08/2008");
+  }
+})

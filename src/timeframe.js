@@ -452,25 +452,23 @@ $extend(Date.prototype, {
     var day = this.getDay(), month = this.getMonth();
     var hours = this.getHours(), minutes = this.getMinutes();
     function pad(num) { return num.toString().pad(2, '0');};
-    return format.replace(/\%([aAbBcdHImMpSwyY])/g, function(part) {
-      switch(part[1]) {
-        case 'a': return Locale.get('dayNames')[day].substr(0, 3); break;
-        case 'A': return Locale.get('dayNames')[day]; break;
-        case 'b': return Locale.get('monthNames')[month].substr(0, 3); break;
-        case 'B': return Locale.get('monthNames')[month].escapeHTML(); break;
-        case 'c': return this.toString(); break;
-        case 'd': return pad(this.getDate()); break;
-        case 'H': return pad(hours); break;
-        case 'I': return (hours % 12 == 0) ? 12 : pad(hours % 12); break;
-        case 'm': return pad(month + 1); break;
-        case 'M': return pad(minutes); break;
-        case 'p': return hours >= 12 ? 'PM' : 'AM'; break;
-        case 'S': return pad(this.getSeconds()); break;
-        case 'w': return day; break;
-        case 'y': return pad(this.getFullYear() % 100); break;
-        case 'Y': return this.getFullYear().toString(); break;
-      }
-    }.bind(this));
+    return format.replace(/\%([aAbBcdHImMpSwyY])/g, "{$1}").substitute({
+      'a': Locale.get('dayNames')[day].substr(0, 3),
+      'A': Locale.get('dayNames')[day],
+      'b': Locale.get('monthNames')[month].substr(0, 3),
+      'B': Locale.get('monthNames')[month],
+      'c': this.toString(),
+      'd': pad(this.getDate()),
+      'H': pad(hours),
+      'I': (hours % 12 == 0) ? 12 : pad(hours % 12),
+      'm': pad(month + 1),
+      'M': pad(minutes),
+      'p': hours >= 12 ? 'PM' : 'AM',
+      'S': pad(this.getSeconds()),
+      'w': day,
+      'y': pad(this.getFullYear() % 100),
+      'Y': this.getFullYear().toString()
+    });
   },
   
   neutral: function() {
